@@ -17,29 +17,17 @@ Dataset
 PropertyDetailsSourceKaggle — Airline Delay and Cancellation DataFiles12 CSV files (~2 GB total)Records71,526,575+ flight recordsColumns28 features (carrier, origin, destination, delays, cancellations, distance)Time Range2009–2020 (12 years of U.S. domestic flights)
 
 Repository Structure
-File / FolderDescription📁 Report/Final project report PDF — full documentation of the pipeline, methodology, and results📁 powerbi/Power BI dashboard screenshots (all pages) + exported PDF📁 screenshots/Pipeline execution screenshots — ADF, Databricks, Azure resources📁 synapse/queries/20 OPENROWSET SQL queries for delay analysis, carrier rankings, seasonal trends📄 ARMTemplateForFactory.jsonAzure Data Factory pipeline ARM template — redeploy the full pipeline📄 ARMTemplateParametersForFactory.jsonADF ARM template parameters file📄 silver_layer_transformation.pyPySpark notebook — Bronze → Silver → Gold transformation logic📄 README.mdProject documentation (this file)
+File / FolderDescription📁 Report/Final project report PDF — full documentation of the pipeline, methodology, and results📁 powerbi/Power BI dashboard screenshots (all pages) + exported PDF (Power Bi.pdf)📁 screenshots/Pipeline execution screenshots — ADF pipeline, Databricks outputs, Azure resources📁 synapse/queries/20 OPENROWSET SQL queries for delay analysis, carrier rankings, seasonal trends📄 ARMTemplateForFactory.jsonAzure Data Factory pipeline ARM template — use to redeploy the full pipeline📄 ARMTemplateParametersForFactory.jsonADF ARM template parameters file📄 silver_layer_transformation.pyPySpark notebook — Bronze → Silver → Gold transformation logic📄 README.mdProject documentation (this file)
 How to Access Key Files
 
-View the pipeline code → silver_layer_transformation.py
-View the report → Report/AirlineDelayAnalysis_FinalReport_Group3(TorontoCampus).pdf
-View dashboard screenshots → powerbi/ folder
+Pipeline code → silver_layer_transformation.py
+Final report → Report/AirlineDelayAnalysis_FinalReport_Group3(TorontoCampus).pdf
+Power BI dashboard PDF → powerbi/Power Bi.pdf
+Dashboard screenshots → powerbi/ folder
+Pipeline screenshots → screenshots/ folder
 Redeploy ADF pipeline → Use ARMTemplateForFactory.json in Azure Portal → Deploy a custom template
 Run SQL queries → synapse/queries/airline_queries.sql in Azure Synapse Analytics
 
-
-Pipeline Screenshots
-Azure Data Factory — Pipeline Canvas
-Show Image
-ADF Pipeline — Successful Run
-Show Image
-Databricks Notebook — Transformation
-Show Image
-Azure Resources
-Show Image
-ADLS Gen2 — Bronze Container
-Show Image
-ADLS Gen2 — Gold Container
-Show Image
 
 Pipeline Stages
 🥉 Bronze Layer — Raw Ingestion
@@ -91,8 +79,6 @@ Two activities run in sequence:
 
 Copy_CSV_to_Bronze — copies all CSVs ✅
 Notebook1 — runs Databricks Silver + Gold transformations ✅
-
-
 
 4. Monitor
 Go to Monitor → Pipeline Runs to track progress.
