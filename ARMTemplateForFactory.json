@@ -1,0 +1,455 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory name",
+            "defaultValue": "airline-adf-project"
+        },
+        "ls_adls_airline_accountKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accountKey' of 'ls_adls_airline'"
+        },
+        "ls_databricks_airline_accessToken": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accessToken' of 'ls_databricks_airline'"
+        },
+        "ls_adls_airline_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "https://airlinedelaylake.dfs.core.windows.net/"
+        },
+        "ls_databricks_airline_properties_typeProperties_existingClusterId": {
+            "type": "string",
+            "defaultValue": "0404-022341-m8krfq1u"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('factoryName'), '/ls_adls_airline')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureBlobFS",
+                "typeProperties": {
+                    "url": "[parameters('ls_adls_airline_properties_typeProperties_url')]",
+                    "accountKey": {
+                        "type": "SecureString",
+                        "value": "[parameters('ls_adls_airline_accountKey')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ls_databricks_airline')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureDatabricks",
+                "typeProperties": {
+                    "domain": "https://adb-7405619209487961.1.azuredatabricks.net",
+                    "accessToken": {
+                        "type": "SecureString",
+                        "value": "[parameters('ls_databricks_airline_accessToken')]"
+                    },
+                    "existingClusterId": "[parameters('ls_databricks_airline_properties_typeProperties_existingClusterId')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_bronze_sink')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_airline",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileSystem": "bronze"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "FL_DATE",
+                        "type": "String"
+                    },
+                    {
+                        "name": "OP_CARRIER",
+                        "type": "String"
+                    },
+                    {
+                        "name": "OP_CARRIER_FL_NUM",
+                        "type": "String"
+                    },
+                    {
+                        "name": "ORIGIN",
+                        "type": "String"
+                    },
+                    {
+                        "name": "DEST",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CRS_DEP_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "DEP_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "DEP_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "TAXI_OUT",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WHEELS_OFF",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WHEELS_ON",
+                        "type": "String"
+                    },
+                    {
+                        "name": "TAXI_IN",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CRS_ARR_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "ARR_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "ARR_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CANCELLED",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CANCELLATION_CODE",
+                        "type": "String"
+                    },
+                    {
+                        "name": "DIVERTED",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CRS_ELAPSED_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "ACTUAL_ELAPSED_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "AIR_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "DISTANCE",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CARRIER_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WEATHER_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "NAS_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SECURITY_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "LATE_AIRCRAFT_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unnamed: 27",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/ls_adls_airline')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ds_bronze_csv')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "ls_adls_airline",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileSystem": "bronze"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "FL_DATE",
+                        "type": "String"
+                    },
+                    {
+                        "name": "OP_CARRIER",
+                        "type": "String"
+                    },
+                    {
+                        "name": "OP_CARRIER_FL_NUM",
+                        "type": "String"
+                    },
+                    {
+                        "name": "ORIGIN",
+                        "type": "String"
+                    },
+                    {
+                        "name": "DEST",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CRS_DEP_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "DEP_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "DEP_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "TAXI_OUT",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WHEELS_OFF",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WHEELS_ON",
+                        "type": "String"
+                    },
+                    {
+                        "name": "TAXI_IN",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CRS_ARR_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "ARR_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "ARR_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CANCELLED",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CANCELLATION_CODE",
+                        "type": "String"
+                    },
+                    {
+                        "name": "DIVERTED",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CRS_ELAPSED_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "ACTUAL_ELAPSED_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "AIR_TIME",
+                        "type": "String"
+                    },
+                    {
+                        "name": "DISTANCE",
+                        "type": "String"
+                    },
+                    {
+                        "name": "CARRIER_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "WEATHER_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "NAS_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "SECURITY_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "LATE_AIRCRAFT_DELAY",
+                        "type": "String"
+                    },
+                    {
+                        "name": "Unnamed: 27",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/ls_adls_airline')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/Silver_to_Gold')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "Copy_CSV_to_Bronze",
+                        "type": "Copy",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "0.12:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "DelimitedTextSource",
+                                "storeSettings": {
+                                    "type": "AzureBlobFSReadSettings",
+                                    "recursive": true,
+                                    "wildcardFileName": "*.csv",
+                                    "enablePartitionDiscovery": false
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextReadSettings"
+                                }
+                            },
+                            "sink": {
+                                "type": "DelimitedTextSink",
+                                "storeSettings": {
+                                    "type": "AzureBlobFSWriteSettings",
+                                    "copyBehavior": "PreserveHierarchy"
+                                },
+                                "formatSettings": {
+                                    "type": "DelimitedTextWriteSettings",
+                                    "quoteAllText": true,
+                                    "fileExtension": ".txt"
+                                }
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "typeConversion": true,
+                                "typeConversionSettings": {
+                                    "allowDataTruncation": true,
+                                    "treatBooleanAsNumber": false
+                                }
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "ds_bronze_csv",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "ds_bronze_sink",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Notebook1",
+                        "type": "DatabricksNotebook",
+                        "dependsOn": [
+                            {
+                                "activity": "Copy_CSV_to_Bronze",
+                                "dependencyConditions": [
+                                    "Completed"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "0.12:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "notebookPath": "/Users/pathan.i@northeastern.edu/silver_layer_transformation"
+                        },
+                        "linkedServiceName": {
+                            "referenceName": "ls_databricks_airline",
+                            "type": "LinkedServiceReference"
+                        }
+                    }
+                ],
+                "policy": {
+                    "elapsedTimeMetric": {}
+                },
+                "annotations": [],
+                "lastPublishTime": "2026-04-13T20:47:53Z"
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/datasets/ds_bronze_csv')]",
+                "[concat(variables('factoryId'), '/datasets/ds_bronze_sink')]",
+                "[concat(variables('factoryId'), '/linkedServices/ls_databricks_airline')]"
+            ]
+        }
+    ]
+}

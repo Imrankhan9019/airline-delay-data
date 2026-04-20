@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "value": "airline-adf-project"
+        },
+        "ls_adls_airline_accountKey": {
+            "value": ""
+        },
+        "ls_databricks_airline_accessToken": {
+            "value": ""
+        },
+        "ls_adls_airline_properties_typeProperties_url": {
+            "value": "https://airlinedelaylake.dfs.core.windows.net/"
+        },
+        "ls_databricks_airline_properties_typeProperties_existingClusterId": {
+            "value": "0404-022341-m8krfq1u"
+        }
+    }
+}
